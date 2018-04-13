@@ -7,12 +7,17 @@ fi
 
 TXID=$1
 
-PAYLOAD=`curl -s https://cardanoexplorer.com/api/txs/summary/$1`
+source config.sh
+
+
+PAYLOAD=`curl -s ${EXPLORER_URL}/api/txs/summary/${TXID}`
 
 TX=`echo "${PAYLOAD}" | jq '.Right'`
 
 if [ -z "$TX" ]; then
-  echo "No match."
+  echo -n "-- "
+  prtRed "$0: No match."
+  echo
   exit 1
 fi
 
@@ -48,7 +53,7 @@ echo "${TX}" | jq -r '.ctsOutputs | .[] | ["addrhash","value"] as $keys | [.[0],
   done
 }
 
-echo "BEGIN TRANSACTION;"
+#echo "BEGIN TRANSACTION;"
 
 H1="go"
 echo "${TX}" | jq -r '.ctsInputs | .[] | ["addrhash","value"] as $keys | [.[0], .[1].getCoin] as $values | $keys, $values | @csv' | {
@@ -81,5 +86,5 @@ echo "${TX}" | jq -r '.ctsOutputs | .[] | ["addrhash","value"] as $keys | [.[0],
     fi
   done
 }
- 
-echo "COMMIT;"
+
+#echo "COMMIT;"

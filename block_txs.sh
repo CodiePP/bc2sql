@@ -7,16 +7,20 @@ fi
 
 BLKHASH=$1
 
-PAYLOAD=`curl -s https://cardanoexplorer.com/api/blocks/txs/$1`
+source config.sh
+
+
+PAYLOAD=`curl -s ${EXPLORER_URL}/api/blocks/txs/${BLKHASH}`
 
 TXLIST=`echo "${PAYLOAD}" | jq '.Right'`
 
 if [ -z "$TXLIST" ]; then
-  echo "No match."
+  echo -n "-- "
+  prtRed "$0: No match."
   exit 1
 fi
 
-echo "BEGIN TRANSACTION;"
+#echo "BEGIN TRANSACTION;"
 
 H1="go"
 echo "${TXLIST}" | jq -r '.[] | ["hash","issued","suminput","sumoutput"] as $keys | [.ctbId , .ctbTimeIssued, .ctbInputSum.getCoin, .ctbOutputSum.getCoin] as $values | $keys, $values | @csv' | {
@@ -26,14 +30,24 @@ echo "${TXLIST}" | jq -r '.[] | ["hash","issued","suminput","sumoutput"] as $key
     read H1 H2 H3 H4
     read TXID ISSUED SUMIN SUMOUT
     if [ -n "${H1}" ]; then 
-      TXID=$(echo $TXID | tr '"' "'")
+      TXID=$(echo $TXID | tr -d '"' )
       SUMIN=$(echo $SUMIN | tr '"' "'")
       SUMOUT=$(echo $SUMOUT | tr '"' "'")
-      echo "INSERT INTO transaction("\"blockid\"", $H1, $H2, $H3, $H4) VALUES((SELECT blockid FROM \"block\" WHERE hash='${BLKHASH}'), $TXID, to_timestamp($ISSUED), $SUMIN, $SUMOUT);"
       IFS=${OLDIFS}
-      ./txs_summary.sh $TXID
+
+      q="SELECT trxid FROM transaction WHERE hash='${TXID}';"
+      r=$(psql -At -q -c "${q}")
+      if [ -n "${r}" ]; then
+        echo -n "-- "
+        prtPurple "$0: tx ${TXID} already in db."
+        echo
+      else
+        echo "INSERT INTO transaction("\"blockid\"", $H1, $H2, $H3, $H4) VALUES((SELECT blockid FROM \"block\" WHERE hash='${BLKHASH}'), '${TXID}', to_timestamp($ISSUED), $SUMIN, $SUMOUT);"
+        ./txs_summary.sh $TXID
+      fi
     fi
+    IFS=${OLDIFS}
   done
 }
  
-echo "COMMIT;"
+#echo "COMMIT;"

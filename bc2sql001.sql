@@ -74,7 +74,7 @@ CREATE TABLE block (
     slot smallint,
     hash character varying(128) NOT NULL,
     issued timestamp with time zone,
-    size smallint,
+    size integer,
     n_tx smallint,
     sent numeric,
     fees numeric,
@@ -130,6 +130,19 @@ CREATE SEQUENCE leader_leaderid_seq
 ALTER SEQUENCE leader_leaderid_seq OWNED BY leader.leaderid;
 
 
+SET default_with_oids = true;
+
+--
+-- Name: magnitude; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE magnitude (
+    mag numeric NOT NULL
+);
+
+
+SET default_with_oids = false;
+
 --
 -- Name: page; Type: TABLE; Schema: public; Owner: -
 --
@@ -170,6 +183,15 @@ CREATE SEQUENCE transaction_trxid_seq
 --
 
 ALTER SEQUENCE transaction_trxid_seq OWNED BY transaction.trxid;
+
+
+--
+-- Name: trx_fees; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW trx_fees AS
+ SELECT (transaction.suminput - transaction.sumoutput) AS fee
+   FROM transaction;
 
 
 --
@@ -271,6 +293,14 @@ ALTER TABLE ONLY leader
 
 
 --
+-- Name: magnitude magnitude_mag_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY magnitude
+    ADD CONSTRAINT magnitude_mag_key UNIQUE (mag);
+
+
+--
 -- Name: page page_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -287,19 +317,31 @@ ALTER TABLE ONLY transaction
 
 
 --
--- Name: trxaddrinputrel trxaddrinputrel_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trxaddrinputrel_addrid_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY trxaddrinputrel
-    ADD CONSTRAINT trxaddrinputrel_pkey PRIMARY KEY (trxid, addrid);
+CREATE INDEX trxaddrinputrel_addrid_idx ON trxaddrinputrel USING btree (addrid);
 
 
 --
--- Name: trxaddroutputrel trxaddroutputrel_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: trxaddrinputrel_trxid_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY trxaddroutputrel
-    ADD CONSTRAINT trxaddroutputrel_pkey PRIMARY KEY (trxid, addrid);
+CREATE INDEX trxaddrinputrel_trxid_idx ON trxaddrinputrel USING btree (trxid);
+
+
+--
+-- Name: trxaddroutputrel_addrid_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX trxaddroutputrel_addrid_idx ON trxaddroutputrel USING btree (addrid);
+
+
+--
+-- Name: trxaddroutputrel_trxid_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX trxaddroutputrel_trxid_idx ON trxaddroutputrel USING btree (trxid);
 
 
 --
@@ -315,7 +357,7 @@ ALTER TABLE ONLY block
 --
 
 ALTER TABLE ONLY block
-    ADD CONSTRAINT block_pagenr_fkey FOREIGN KEY (pagenr) REFERENCES page(pagenr);
+    ADD CONSTRAINT block_pagenr_fkey FOREIGN KEY (pagenr) REFERENCES page(pagenr) ON DELETE CASCADE;
 
 
 --
@@ -323,7 +365,7 @@ ALTER TABLE ONLY block
 --
 
 ALTER TABLE ONLY transaction
-    ADD CONSTRAINT transaction_blockid_fkey FOREIGN KEY (blockid) REFERENCES block(blockid);
+    ADD CONSTRAINT transaction_blockid_fkey FOREIGN KEY (blockid) REFERENCES block(blockid) ON DELETE CASCADE;
 
 
 --
@@ -339,7 +381,7 @@ ALTER TABLE ONLY trxaddrinputrel
 --
 
 ALTER TABLE ONLY trxaddrinputrel
-    ADD CONSTRAINT trxaddrinputrel_trxid_fkey FOREIGN KEY (trxid) REFERENCES transaction(trxid);
+    ADD CONSTRAINT trxaddrinputrel_trxid_fkey FOREIGN KEY (trxid) REFERENCES transaction(trxid) ON DELETE CASCADE;
 
 
 --
@@ -347,7 +389,7 @@ ALTER TABLE ONLY trxaddrinputrel
 --
 
 ALTER TABLE ONLY trxaddroutputrel
-    ADD CONSTRAINT trxaddroutputrel_trxid_fkey FOREIGN KEY (trxid) REFERENCES transaction(trxid);
+    ADD CONSTRAINT trxaddroutputrel_trxid_fkey FOREIGN KEY (trxid) REFERENCES transaction(trxid) ON DELETE CASCADE;
 
 
 --
@@ -356,6 +398,69 @@ ALTER TABLE ONLY trxaddroutputrel
 
 ALTER TABLE ONLY trxaddroutputrel
     ADD CONSTRAINT ttrxaddroutputrel_addrid_fkey FOREIGN KEY (addrid) REFERENCES address(addrid);
+
+
+--
+-- Name: address; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE address TO PUBLIC;
+
+
+--
+-- Name: block; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE block TO PUBLIC;
+
+
+--
+-- Name: leader; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE leader TO PUBLIC;
+
+
+--
+-- Name: magnitude; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE magnitude TO PUBLIC;
+
+
+--
+-- Name: page; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE page TO PUBLIC;
+
+
+--
+-- Name: transaction; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE transaction TO PUBLIC;
+
+
+--
+-- Name: trxaddrinputrel; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE trxaddrinputrel TO PUBLIC;
+
+
+--
+-- Name: trxaddroutputrel; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT ON TABLE trxaddroutputrel TO PUBLIC;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: -; Owner: -
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE axeld GRANT SELECT ON TABLES  TO PUBLIC;
 
 
 --

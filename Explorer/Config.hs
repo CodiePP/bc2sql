@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Config
+module Explorer.Config
   (
         pgdatabase
       , pghost
@@ -26,8 +26,8 @@ pguser="bc2sql"
 
 
 -- Explorer
---explorer_url="https://cardanoexplorer.com"
-explorerUrl="http://localhost:8100"
+explorerUrl="https://cardanoexplorer.com"
+--explorerUrl="http://localhost:8100"
 
 
 ctl_red="\ESC[31m"

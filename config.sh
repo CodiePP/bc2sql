@@ -8,8 +8,8 @@ export PGPORT=5432
 
 
 # Explorer
-#export EXPLORER_URL="https://cardanoexplorer.com"
-export EXPLORER_URL="http://localhost:8100"
+export EXPLORER_URL="https://cardanoexplorer.com"
+#export EXPLORER_URL="http://localhost:8100"
 
 
 source colors.sh

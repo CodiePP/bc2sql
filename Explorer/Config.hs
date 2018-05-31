@@ -19,16 +19,15 @@ where
 
 -- Postgres access
 
-pgdatabase="bc2sql001"
-pghost="localhost"
+pgdatabase=undefined -- "bc2sql001"
+pghost=undefined -- "localhost"
 pgport="5432"
-pguser="bc2sql"
+pguser=undefined -- "bc2sql"
 
 
 -- Explorer
 explorerUrl="https://cardanoexplorer.com"
 --explorerUrl="http://localhost:8100"
-
 
 ctl_red="\ESC[31m"
 ctl_green="\ESC[32m"

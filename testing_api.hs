@@ -32,11 +32,21 @@ tAdaSupply =
   in
   callApi path []
 
+-- | number of pages
+--
+tNumPages =
+  let path = "/api/blocks/pages/total"
+  in
+  callApi path []
+
+
 main :: IO ()
 main = do
   --
   tLastTrx
   --
   tAdaSupply
+  --
+  tNumPages
   --
   exitSuccess

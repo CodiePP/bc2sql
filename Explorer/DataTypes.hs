@@ -58,7 +58,7 @@ data Block = Block {
     cbeSlot :: Integer,
     cbeBlkHash :: String,
     cbeTimeIssued :: Integer,
-    cbeTxNum :: Integer,
+    cbeTxNum :: Int,
     cbeTotalSent:: GetCoin,
     cbeSize :: Integer,
     cbeBlockLead :: String,

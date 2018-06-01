@@ -54,7 +54,7 @@ processPage conn pageno doSQL = do
                putStrLn q2
            else do
                void $ execute conn (fromString q2) a2
-               processBlock conn (cbeBlkHash b) doSQL
+               processBlock conn (cbeBlkHash b) (cbeTxNum b) doSQL
            )
          return ()
 
@@ -68,7 +68,7 @@ showPage pageno = do
          forM_ bs (\b -> do
            putStrLn $ "================================BLOCK=="
            putStrLn $ show b
-           showBlock $ cbeBlkHash b
+           showBlock (cbeBlkHash b) (cbeTxNum b)
            )
          return ()
 

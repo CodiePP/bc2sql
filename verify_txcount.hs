@@ -19,8 +19,8 @@ import qualified Explorer.Config as Config
 -- | query to be run
 q :: Query
 q = "\
-  \ SELECT t1.hash AS block_hash, t1.issued, t1.n_tx, t2.n_trxs AS tx_counted FROM \n\
-  \   (SELECT blockid, n_tx, hash, issued FROM block) AS t1 \n\
+  \ SELECT t1.pagenr, t1.hash AS block_hash, t1.issued, t1.n_tx, t2.n_trxs AS tx_counted FROM \n\
+  \   (SELECT pagenr, blockid, n_tx, hash, issued FROM block) AS t1 \n\
   \   JOIN  \n\
   \   (SELECT blockid, COUNT(*) AS n_trxs \n\
   \    FROM transaction \n\
@@ -32,17 +32,18 @@ q = "\
 -------------------------------------------------------------------------------
 -- | the result type of the above query
 data Result = Result {
-                       hash :: Maybe String
+                       pagenr :: Maybe Int
+                     , hash :: Maybe String
                      , issued :: Maybe UTCTime
                      , n_tx :: Maybe Int
                      , tx_counted :: Maybe Int
                      }
 
 instance Show Result where
-  show r = Config.asRed ((show $ tx_counted r) ++ " != " ++ (show $ n_tx r)) ++ " in block " ++ Config.asBlue (show $ hash r) ++ " @ " ++ (show $ issued r)
+  show r = Config.asRed ((show $ tx_counted r) ++ " != " ++ (show $ n_tx r)) ++ " in page " ++ Config.asBlue (show $ pagenr r) ++ " in block " ++ Config.asBlue (show $ hash r) ++ " @ " ++ (show $ issued r)
 
 instance FromRow Result where
-  fromRow = Result <$> field <*> field <*> field <*> field
+  fromRow = Result <$> field <*> field <*> field <*> field <*> field
 
 
 -------------------------------------------------------------------------------

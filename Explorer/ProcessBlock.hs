@@ -25,14 +25,14 @@ import           Network.Wreq
 decodeBlock :: B.ByteString -> Maybe (Either String [BlockTxs])
 decodeBlock = decode
 
-getBlock :: String -> IO (Maybe (Either String [BlockTxs]))
-getBlock bhash = do
-    resp' <- get $ Config.explorerUrl ++ "/api/blocks/txs/" ++ bhash
+getBlock :: String -> Int -> IO (Maybe (Either String [BlockTxs]))
+getBlock bhash nlimit = do
+    resp' <- get $ Config.explorerUrl ++ "/api/blocks/txs/" ++ bhash ++ "?limit=" ++ (show nlimit)
     return $ decodeBlock $ resp' ^. responseBody
 
-processBlock :: Connection -> String -> Bool -> IO ()
-processBlock conn bhash doSQL =
-    getBlock bhash >>= \case
+processBlock :: Connection -> String -> Int -> Bool -> IO ()
+processBlock conn bhash nlimit doSQL =
+    getBlock bhash nlimit >>= \case
         Nothing ->
             putStrLn $ Config.asRed "failure!"
         Just (Left s) ->
@@ -73,13 +73,13 @@ record_addr_val conn prefix trxid (addr, value) doSQL = do
     else
         void $ execute conn (fromString q1) (trxid, addr, getCoin value)
 
-showBlock :: String -> IO ()
-showBlock bhash = do
+showBlock :: String -> Int -> IO ()
+showBlock bhash nlimit = do
     putStrLn $ "====================================="
     putStrLn $ "block:   " ++ bhash
     --resp' <- get $ Config.explorerUrl ++ "/api/blocks/txs/" ++ bhash
     --case decodeBlock $ resp' ^. responseBody of
-    getBlock bhash >>= \case
+    getBlock bhash nlimit >>= \case
         Nothing ->
            putStrLn "failure!"
         Just (Right txs) ->

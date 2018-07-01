@@ -22,8 +22,10 @@ ENDPAGE=$((NPAGES - 1))
 
 echo "from ${STARTPAGE} to ${ENDPAGE}"
 
-for P in `seq ${STARTPAGE} ${ENDPAGE}`; do
-  prtBlue "${P}  "
-  ./get_page.sh ${P} | psql -q -d ${PGDATABASE} --
-done
+./get_pages.hs ${STARTPAGE} ${ENDPAGE}
+
+#for P in `seq ${STARTPAGE} ${ENDPAGE}`; do
+#  prtBlue "${P}  "
+#  ./get_page.sh ${P} | psql -q -d ${PGDATABASE} --
+#done
 

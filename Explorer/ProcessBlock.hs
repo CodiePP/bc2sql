@@ -8,7 +8,7 @@ module Explorer.ProcessBlock
   )
 where
 
-import           Control.Lens  ((^.))
+import           Lens.Micro  ((^.))
 import           Control.Monad (forM_, void)
 
 import           Data.Aeson    (decode)

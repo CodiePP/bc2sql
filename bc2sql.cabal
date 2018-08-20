@@ -1,0 +1,67 @@
+name:                bc2sql
+version:             0.1.0.0
+synopsis:            map Ada explorer information to sql
+homepage:            https://github.com/CodiePP/bc2sql
+license:             MIT
+license-file:        LICENSE
+author:              Alexander Diemand
+maintainer:          codieplusplus@apax.net
+copyright:           2018 Alexander Diemand
+category:            Service
+build-type:          Simple
+extra-source-files:  ChangeLog.md, README.md
+cabal-version:       >=1.10
+
+
+library
+  exposed-modules:
+                       Explorer.Config
+                       Explorer.DataTypes
+                       Explorer.ProcessBlock
+                       Explorer.ProcessPage
+
+  build-depends:       base
+                     , bytestring
+                     , aeson
+                     , unix
+                     , SHA
+                     , microlens
+                     , wreq
+                     , postgresql-simple
+  hs-source-dirs:      .
+  default-language:    Haskell2010
+
+
+executable npages
+  hs-source-dirs:      progs
+  main-is:             NPages.hs
+  -- other-modules:       
+  other-extensions:    LambdaCase, OverloadedStrings, DeriveGeneric, ScopedTypeVariables
+  build-depends:       base
+                     , bc2sql
+                     , bytestring
+                     , aeson
+                     , unix
+                     , SHA
+
+  default-language:    Haskell2010
+
+executable get-pages
+  hs-source-dirs:      progs
+  main-is:             GetPages.hs
+
+  -- other-modules:       
+
+  other-extensions:    LambdaCase, OverloadedStrings, DeriveGeneric, ScopedTypeVariables
+
+  build-depends:       base
+                     , bc2sql
+                     , bytestring
+                     , aeson
+                     , unix
+                     , wreq
+                     , SHA
+                     , postgresql-simple
+
+  default-language:    Haskell2010
+

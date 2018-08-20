@@ -19,10 +19,10 @@ where
 
 -- Postgres access
 
-pgdatabase=undefined -- "bc2sql001"
-pghost=undefined -- "localhost"
+pgdatabase="bc2sql001"
+pghost="localhost"
 pgport="5432"
-pguser=undefined -- "bc2sql"
+pguser="bc2sql"
 
 
 -- Explorer

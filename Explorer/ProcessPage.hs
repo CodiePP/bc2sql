@@ -9,7 +9,7 @@ module Explorer.ProcessPage
 where
 
 import           Network.Wreq
-import           Control.Lens  ((^.))
+import           Lens.Micro  ((^.))
 import           Control.Monad (forM_, void)
 
 import           Data.Aeson (decode)
@@ -83,7 +83,7 @@ showPageHeight = do
              putStrLn $ "failure: " ++ s
              return 0
            Just (Right n) -> do
-             putStrLn $ "max pages:  " ++ (show n)
+             putStrLn (show n)
              return n
     where
         decoder :: B.ByteString -> Maybe (Either String Int)

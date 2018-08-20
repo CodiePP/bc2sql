@@ -14,6 +14,28 @@ CREATE ROLE bc2sql LOGIN
   NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
 ```
 
+# compilation
+
+after adapting `Explorer/Config.hs` to your needs you may want to compile
+the program to load data from the explorer into your local database using
+these two steps:
+
+1. enter a Nix shell:
+
+```
+nix-shell
+```
+this will bring the required packages (see `shell.nix`) into the environment
+
+2. compile and install the binaries in directory `bin`:
+
+```
+stack install
+```
+
+now `bin/` should contain the binaries `npages` and `get-pages`
+which are used by the script `catch_up.sh`.
+
 
 # data gathering
 

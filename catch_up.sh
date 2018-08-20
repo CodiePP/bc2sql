@@ -2,7 +2,8 @@
 
 source config.sh
 
-NPAGES=`./npages.sh`
+NPAGES=`./sh/npages.sh`
+NPAGES=`./bin/npages`
 if [ -z "${NPAGES}" -o $NPAGES -lt 111 ]; then
   echo -n "-- "
   prtRed "$0: cannot query explorer for total number of pages."
@@ -22,10 +23,10 @@ ENDPAGE=$((NPAGES - 1))
 
 echo "from ${STARTPAGE} to ${ENDPAGE}"
 
-./get_pages.hs ${STARTPAGE} ${ENDPAGE}
-
-#for P in `seq ${STARTPAGE} ${ENDPAGE}`; do
-#  prtBlue "${P}  "
-#  ./get_page.sh ${P} | psql -q -d ${PGDATABASE} --
-#done
+# choose one of:
+# the 'stack' script
+#./get_pages.hs ${STARTPAGE} ${ENDPAGE}
+# or:
+# the compiled program
+./bin/get-pages ${STARTPAGE} ${ENDPAGE}
 

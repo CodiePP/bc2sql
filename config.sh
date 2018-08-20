@@ -4,6 +4,8 @@
 export PGDATABASE=bc2sql001
 export PGHOST=localhost
 export PGPORT=5432
+
+# indicate the database user which can write
 #export PGUSER=
 
 
